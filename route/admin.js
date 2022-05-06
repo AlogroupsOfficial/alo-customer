@@ -1,0 +1,17 @@
+const Router = require('express').Router();
+const { customer_types, get_customer_types } = require('../controllers/admin/customer_type');
+const { nationality, get_nationality } = require('../controllers/admin/nationality');
+const { oldclient, get_oldclient } = require('../controllers/admin/oldclient');
+const { restricted, get_restricted_types } = require('../controllers/admin/restricted');
+const { vip, get_vip } = require('../controllers/admin/vip');
+Router.post('/customer_types',customer_types);
+Router.get('/customer_types',get_customer_types);
+Router.post('/restricted',restricted);
+Router.get('/restricted',get_restricted_types);
+Router.post('/nationality',nationality);
+Router.get('/nationality',get_nationality);
+Router.post('/oldclient',oldclient);
+Router.get('/oldclient',get_oldclient);
+Router.post('/vip',vip);
+Router.get('/vip',get_vip);
+module.exports = Router;
