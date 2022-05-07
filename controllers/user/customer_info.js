@@ -15,8 +15,8 @@ exports.customer_info = async (req, res) => {
             errors.action.push('Unable to parse request body. ' + err.message);
         }
     }
-    let customer_id, customer_type, restricted, nationality, old_client, vip, passport_number, cpr, cr,firstname,lastname,phone_number,fax,mobile_number,email,plot_Door_no,street_village_name,city_state_name
-    ;
+    let customer_id, customer_type, restricted, nationality, old_client, vip, passport_number, cpr, cr, firstname, lastname, phone_number, fax, mobile_number, email, plot_Door_no, street_village_name, city_state_name
+        ;
     if (Object.keys(errors).length === 0) {
         if (bodykeys.includes('customer_id')) {
             customer_id = req.body.customer_id;
@@ -134,7 +134,7 @@ exports.customer_info = async (req, res) => {
                 errors.phone_number = [];
                 errors.phone_number.push('phone_number is required')
             }
-            if(phone_number.length > 13 || phone_number <10){
+            if (phone_number.length > 13 || phone_number < 10) {
                 errors.phone_number = [];
                 errors.phone_number.push('Please enter correct phone number')
             }
@@ -203,17 +203,18 @@ exports.customer_info = async (req, res) => {
             errors.city_state_name.push('city_state_name should be provided in the request body')
         }
     }
-    let id;
+    let id, createdat;
     if (Object.keys(errors).length === 0) {
-        id = uuidv4()
+        id = uuidv4();
+        createdat = new Date().getTime();
         try {
-            await pool.query(`INSERT INTO customer_info (id,customer_id,customer_type,restricted,nationality,old_client,vip,passport_number,cpr,cr,firstname,lastname,phone_number,fax,mobile_number,email,plot_Door_no,street_village_name,city_state_name) VALUES ('${id}','${customer_id}','${customer_type}','${restricted}','${nationality}','${old_client}','${vip}','${passport_number}','${cpr}','${cr}','${firstname}','${lastname}','${phone_number}','${fax}','${mobile_number}','${email}','${plot_Door_no}','${street_village_name}','${city_state_name}');`, function (error, results, fields) {
+            await pool.query(`INSERT INTO customer_info (id,customer_id,customer_type,restricted,nationality,old_client,vip,passport_number,cpr,cr,firstname,lastname,phone_number,fax,mobile_number,email,plot_Door_no,street_village_name,city_state_name,createdat) VALUES ('${id}','${customer_id}','${customer_type}','${restricted}','${nationality}','${old_client}','${vip}','${passport_number}','${cpr}','${cr}','${firstname}','${lastname}','${phone_number}','${fax}','${mobile_number}','${email}','${plot_Door_no}','${street_village_name}','${city_state_name}','${createdat}');`, function (error, results, fields) {
                 if (error) {
                     console.log(error);
                 }
                 res.status(200).json({ status: "SUCCESS", message: "successfully create customer_info" })
             });
-        } catch {
+        } catch (err) {
             errors.query = [];
             errors.query.push(`Error while create customer_info :: ${err}`)
         }
@@ -227,7 +228,7 @@ exports.get_customer_info = async (req, res) => {
     let errors = {};
     if (Object.keys(errors).length === 0) {
         try {
-            await pool.query("SELECT * FROM customer_info", (err, data) => {
+            await pool.query("SELECT * FROM customer_info WHERE status=0", (err, data) => {
                 if (err) {
                     console.error(err);
                     return;
@@ -260,8 +261,8 @@ exports.update_customer_info = async (req, res) => {
             errors.action.push('Unable to parse request body. ' + err.message);
         }
     }
-    let cus_id, customer_id, customer_type, restricted, nationality, old_client, vip, passport_number, cpr, cr,firstname,lastname,phone_number,fax,mobile_number,email,plot_Door_no,street_village_name,city_state_name
-    ;
+    let cus_id, customer_id, customer_type, restricted, nationality, old_client, vip, passport_number, cpr, cr, firstname, lastname, phone_number, fax, mobile_number, email, plot_Door_no, street_village_name, city_state_name
+        ;
     if (Object.keys(errors).length === 0) {
         if (bodykeys.includes('customer_id')) {
             customer_id = req.body.customer_id;
@@ -389,7 +390,7 @@ exports.update_customer_info = async (req, res) => {
                 errors.phone_number = [];
                 errors.phone_number.push('phone_number is required')
             }
-            if(phone_number.length > 13 || phone_number <10){
+            if (phone_number.length > 13 || phone_number < 10) {
                 errors.phone_number = [];
                 errors.phone_number.push('Please enter correct phone number')
             }
@@ -458,25 +459,52 @@ exports.update_customer_info = async (req, res) => {
             errors.city_state_name.push('city_state_name should be provided in the request body')
         }
     }
-    let id;
+
     if (Object.keys(errors).length === 0) {
-        id = uuidv4()
+        let updateat = new Date().getTime();
         try {
 
             await pool.query(`UPDATE customer_info
-            SET customer_id = '${customer_id}', customer_type = '${customer_type}',restricted = '${restricted}', nationality = '${nationality}', old_client='${old_client}', vip='${vip}', passport_number='${passport_number}', cpr='${cpr}', cr='${cr}',firstname='${firstname}',lastname='${lastname}',phone_number='${phone_number}',fax='${fax}',mobile_number='${mobile_number}',email='${email}',plot_Door_no='${plot_Door_no}',street_village_name='${street_village_name}',city_state_name='${city_state_name}'
+            SET customer_id = '${customer_id}', customer_type = '${customer_type}',restricted = '${restricted}', nationality = '${nationality}', old_client='${old_client}', vip='${vip}', passport_number='${passport_number}', cpr='${cpr}', cr='${cr}',firstname='${firstname}',lastname='${lastname}',phone_number='${phone_number}',fax='${fax}',mobile_number='${mobile_number}',email='${email}',plot_Door_no='${plot_Door_no}',street_village_name='${street_village_name}',city_state_name='${city_state_name}',updateat='${updateat}'
             WHERE id='${cus_id}';`, function (error, results, fields) {
                 if (error) {
                     console.log(error);
                 }
                 res.status(200).json({ status: "SUCCESS", message: "successfully create customer_info" })
             });
-        } catch {
+        } catch (err) {
             errors.query = [];
             errors.query.push(`Error while create customer_info :: ${err}`)
         }
     }
     if (!(Object.keys(errors).length === 0)) {
         res.status(400).json({ status: "ERROR", errors: errors })
+    }
+}
+
+exports.del_customer_info = async (req, res) => {
+    let errors = {};
+    let id = req.params.id;
+    if (!id) {
+        errors.id = [];
+        errors.id.push(`id is required`);
+    }
+    if (Object.keys(errors).length === 0) {
+        try {
+            await pool.query(`UPDATE customer_info SET status=1 WHERE id='${id}'`, (err, data) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+                // rows fetch
+                return res.status(200).json(`Successfully Delete customer info`);
+            });
+        } catch (err) {
+            errors.query = [];
+            errors.query.push(`Error while create customer_info :: ${err}`)
+        }
+    }
+    if (!(Object.keys(errors).length === 0)) {
+        res.status(400).json(errors)
     }
 }
